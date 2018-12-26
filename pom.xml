@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.stu</groupId>
+    <artifactId>spring-01-helloworld</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <description>Spring helloworld demo</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>5.1.2.RELEASE</spring.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <!--Spring-core module has most basic classes required to work with other spring modules. -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>5.1.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <!--
+            Spring-beans module provides org.springframework.beans.factory.BeanFactory interface
+            which is required to work with spring beans.
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>5.1.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <!--
+            Spring-context module provides org.springframework.context.ApplicationContext interface
+            which enables additional features such as message resources,
+            AOP capabilities, specific types of application contexts and bean lifecycle event listeners.
+            -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.1.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>
