@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+    配置Bean
+    class: bean的全类名，通过反射的方式在IOC容器中创建Bean，所以要求Bean中必须有无参数的构造器。
+    id: 表示容器中的bean，id必须是唯一的。
+     -->
+    <bean id="car1" class="edu.stu.domain.Car">
+        <property name="brand" value="BMW"/>
+        <property name="price" value="300000"/>
+        <property name="tire" value="37.5"/>
+        <property name="maxSpeed" value="280"/>
+    </bean>
+
+    <!--通过构造方法来配置Bean的属性-->
+    <bean id="car2" class="edu.stu.domain.Car">
+        <constructor-arg value="Audi"/>
+        <constructor-arg value="35.5"/>
+        <constructor-arg value="500000"/>
+        <constructor-arg value="280"/>
+    </bean>
+
+
+    <!--使用构造器注入属性值，可以指定参数的位置和参数的类型。以区分重载的构造器-->
+    <bean id="car3" class="edu.stu.domain.Car">
+        <constructor-arg value="Mercedes-Benz"/>
+        <!--轮胎半径-->
+        <constructor-arg value="35.5" type="java.lang.Double"/>
+        <!--价格-->
+        <constructor-arg value="600000"/>
+    </bean>
+
+    <bean id="car4" class="edu.stu.domain.Car">
+        <constructor-arg value="Ford"/>
+        <!--价格-->
+        <constructor-arg value="400000" type="java.lang.Integer"/>
+        <!--速度-->
+        <constructor-arg value="300" index="2"/>
+    </bean>
+
+
+</beans>

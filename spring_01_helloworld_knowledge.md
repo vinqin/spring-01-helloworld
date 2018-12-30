@@ -64,12 +64,12 @@ Spring提供了两种类型的IOC容器的实现：
    * `ClassPathXmlApplicationContext`：从类路径下加载配置文件
    * `FileSystemXmlApplicationContext`：从文件系统中加载配置文件
 2. `ConfigurableApplicationContext`接口是`ApplicationContext`接口的子接口，它新增了两个主要的方法：`refresh()`和`close()`，让`ApplicationContext`具有启动、刷新和关闭上下文的功能
-3. `ApplicationContext`在初始化上下文时就实例化所有**单例**的`Bean`
+3. <u>`ApplicationContext`在初始化上下文时就实例化所有**单例**的`Bean`</u>
 4. `WebApplicationContext`是专门为WEB而准备的，它允许从相对于WEB应用程序的根目录的路径下加载配置文件来完成初始化工作
 
 ![ApplicationContext接口的继承关系](pic/1_2.png)
 
-####依赖注入的方式
+#### 依赖注入的方式
 
 1. 属性注入
 2. 构造器注入
@@ -96,7 +96,7 @@ public class Car {
 
     private String brand;
 
-    private String corp;
+    private String tire;
 
     private Integer price;
 
@@ -105,9 +105,9 @@ public class Car {
     public Car() {
     }
 
-    public Car(String brand, String corp, Integer price, Integer maxSpeed) {
+    public Car(String brand, String tire, Integer price, Integer maxSpeed) {
         this.brand = brand;
-        this.corp = corp;
+        this.tire = tire;
         this.price = price;
         this.maxSpeed = maxSpeed;
     }
