@@ -125,3 +125,108 @@ public class Car {
 </bean>
 ```
 
+##### 字面值
+
+可用字符串表示的值，可以通过`<value>`标签或者`value`属性进行注入。其中基本数据类型及其封装类，String类型都可以采用字面值注入的方式。若字面值中包含特殊字符，可以使用`<![CDATA[XXX]]>`把字面值XXX包裹起来。
+
+##### 引用其他的Bean
+
+组成应用程序的Bean经常需要相互协作以完成应用程序的功能。要使Bean能够互相引用，就必须在Bean配置文件中指定对Bean的引用。
+
+* 在Bean的配置文件中，可以通过`<ref>`标签或者`ref`属性为Bean的属性或构造器参数指定对Bean的引用。
+
+* 也可以在属性或者构造器里包含Bean的声明，这样的Bean成为**内部Bean**。
+
+  ​	当Bean的实例仅仅给一个特定的属性使用时，可以将其声明为内部Bean。内部Bean的声明直接包含在`<property>`或者`<constructor-arg>`元素里，不需要为其设置任何id或name属性。内部Bean不能被其他的Bean引用到。
+
+##### null值
+
+可以使用专用的`<null/>`元素标签为Bean的引用类型的属性注入null值。
+
+##### 级联属性
+
+```xml
+<!--级联属性举例-->
+    <bean id="p3" class="edu.stu.domain.Person">
+        <constructor-arg value="George"/>
+        <constructor-arg value="36"/>
+        <constructor-arg ref="car1"/>
+        <!--为级联属性赋值。修改George拥有的car的价格-->
+        <property name="car.price" value="800000"/>
+    </bean>
+```
+
+为级联属性赋值时需要注意：<u>该属性必须先初始化后才可以为其级联属性赋值，否则会有异常</u>，这点和Struts2不同。例如如下配置会报异常，
+
+```xml
+<bean id="p4" class="edu.stu.domain.Person">
+    <property name="name" value="Harley"/>
+    <property name="age" value="34"/>
+    <!--报异常的原因：属性car还未初始化，所以不能为该属性的brand和price属性赋值-->
+    <property name="car.brand" value="Volkswagen"/>
+    <property name="car.price" value="230000"/>
+</bean>
+```
+
+##### 集合属性
+
+在Spring中可以通过一组内置的xml标签（例如，`<list>`，`<set>`，`<map>`）来配置集合属性。
+
+* 配置`java.util.List`类型的属性，需要指定`<list>`标签，在该标签里可以包含一些子标签，这些子标签可以是`<value>`指定简单的字面量值，可以是`<ref>`指定对其他Bean的引用，可以是`<null/>`指定空元素，也可以是`<bean>`指定内置Bean的定义，甚至可以内嵌其他集合。
+* 配置`java.util.Set`需要使用`<set>`标签，定义元素的方法与List一样。
+* `java.util.Map`通过`<map>`标签定义，`<map>`标签里可以使用多个`<entry>`作为子标签，每个条目包含一个键和一个值。可以键Map的键和值作为`<entry>`的属性定义：简单的字面量值可以直接用`key`和`value`属性来定义，Bean的引用通过`key-ref`和`value-ref`属性来定义。若不在`<entry>`标签中通过属性的方式定义键值对，那么必须在该标签里通过声明子标签`<key>`来定义键。因为键和值的类型没有限制，所以可以自由地为它们指定`<value>`，`<ref>`，`<bean>`或`<null/>`元素。
+* `java.util.Properties`通过`<props>`标签定义。
+
+##### 使用`utility scheme`定义集合
+
+* 在使用基本的集合标签定义集合时，不能将这个已经定义好的集合作为独立的Bean使用，这导致其他Bean无法引用该集合，所以无法在不同的Bean之间共享集合。
+
+* 可以使用`util schema`里的集合标签来定义独立的集合Bean。
+
+  ​	先在配置文件的`<beans>`根元素里添加`util schema`的定义，然后定义独立的集合Bean，例如：
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:util="http://www.springframework.org/schema/util"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/util
+         http://www.springframework.org/schema/util/spring-util.xsd">
+      
+      <!--配置单例的集合类型bean，以供其他bean进行引用-->
+      <util:list id="cars1" value-type="edu.stu.domain.Car" 
+                 list-class="java.util.LinkedList">
+          <ref bean="car1"/>
+          <ref bean="car2"/>
+          <ref bean="car3"/>
+          <ref bean="car4"/>
+          <bean class="edu.stu.domain.Car">
+              <property name="brand" value="Lexus"/>
+              <property name="price" value="750000"/>
+              <property name="tire" value="40"/>
+              <property name="maxSpeed" value="260"/>
+          </bean>
+      </util:list>
+      
+      <bean id="c.p2" class="edu.stu.domain.collections.Person">
+          <property name="name" value="George Walker Bush"/>
+          <property name="age" value="73"/>
+          <!--引用上面定义好的集合Bean-->
+          <property name="cars" ref="cars1"/>
+      </bean>
+      
+  </beans>
+  ```
+
+##### 使用 p 命名空间
+
+为了简化Spring配置文件的配置，越来越多的XML文件采用属性而非子元素配置信息。Spring从2.5版本开始引入了一个新的p命名空间，可以通过`<bean>`元素的属性的方式配置Bean的属性信息，从而简化配置方式。例如，
+
+```xml
+ <!--通过 p 命名空间为bean的属性赋值，使用之前需先导入 p 命名空间的 schema-->
+<bean id="c.p3" class="edu.stu.domain.collections.Person"
+      p:name="Lee" p:age="35" p:cars-ref="cars1"/>
+```
+

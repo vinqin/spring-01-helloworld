@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--
     配置Bean
@@ -41,5 +45,115 @@
         <constructor-arg value="300" index="2"/>
     </bean>
 
+    <bean id="p1" class="edu.stu.domain.Person">
+        <property name="name" value="Tom"/>
+        <property name="age" value="28"/>
+        <!--可以使用property的 ref 属性建立bean之间的引用关系 -->
+        <property name="car" ref="car2"/>
+    </bean>
+
+    <!--内部Bean，不能被外部引用，只能在内部使用-->
+    <bean id="p2" class="edu.stu.domain.Person">
+        <property name="name" value="Jerry"/>
+        <property name="age" value="26"/>
+        <property name="car">
+            <bean class="edu.stu.domain.Car">
+                <property name="brand" value="Cadillac"/>
+                <property name="price" value="500000"/>
+                <property name="tire" value="35.5"/>
+                <property name="maxSpeed" value="300"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--级联属性举例-->
+    <bean id="p3" class="edu.stu.domain.Person">
+        <constructor-arg value="George"/>
+        <constructor-arg value="36"/>
+        <constructor-arg ref="car1"/>
+        <!--为级联属性赋值。修改George拥有的car的价格-->
+        <property name="car.price" value="800000"/>
+    </bean>
+    <!--&lt;!&ndash;级联属性举例&ndash;&gt;-->
+    <!--<bean id="p4" class="edu.stu.domain.Person">-->
+    <!--<property name="name" value="Harley"/>-->
+    <!--<property name="age" value="34"/>-->
+    <!--<property name="car" ref="car1"/>-->
+    <!--<property name="car.brand" value="Volkswagen"/>-->
+    <!--<property name="car.price" value="230000"/>-->
+    <!--</bean>-->
+
+    <!--集合属性举例-->
+    <bean id="c.p1" class="edu.stu.domain.collections.Person">
+        <property name="name" value="Ellen"/>
+        <property name="age" value="60"/>
+        <property name="cars">
+            <!--使用list节点为List类型的属性赋值-->
+            <list value-type="edu.stu.domain.Car">
+                <ref bean="car1"/>
+                <ref bean="car2"/>
+                <ref bean="car3"/>
+                <ref bean="car4"/>
+                <bean class="edu.stu.domain.Car">
+                    <property name="brand" value="Lamborghini"/>
+                    <property name="price" value="3000000"/>
+                    <property name="tire" value="30.5"/>
+                    <property name="maxSpeed" value="310"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!--集合属性举例-->
+    <bean id="c.h1" class="edu.stu.domain.collections.Human">
+        <property name="name" value="William"/>
+        <property name="age" value="42"/>
+        <property name="cars">
+            <!--使用map节点及map的entry子节点配置java.util.Map类型的成员变量-->
+            <map key-type="java.lang.String" value-type="edu.stu.domain.Car">
+                <entry key="宝马" value-ref="car1"/>
+                <entry key="大奔" value-ref="car3"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--配置java.util.Properties属性值-->
+    <bean id="dataSource" class="edu.stu.domain.collections.DataSource">
+        <property name="properties">
+            <!--使用props和prop子节点来为java.util.Properties属性赋值-->
+            <props>
+                <prop key="username">root</prop>
+                <prop key="password">123456</prop>
+                <prop key="jdbcUrl">jdbc:mysql://localhost/test</prop>
+                <prop key="driverClass">com.mysql.jdbc.Driver</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--配置单例的集合类型bean，以供其他bean进行引用，注意如下用法需要导入util命名空间-->
+    <util:list id="cars1" value-type="edu.stu.domain.Car" list-class="java.util.LinkedList">
+        <ref bean="car1"/>
+        <ref bean="car2"/>
+        <ref bean="car3"/>
+        <ref bean="car4"/>
+        <bean class="edu.stu.domain.Car">
+            <property name="brand" value="Lexus"/>
+            <property name="price" value="750000"/>
+            <property name="tire" value="40"/>
+            <property name="maxSpeed" value="260"/>
+        </bean>
+    </util:list>
+
+    <bean id="c.p2" class="edu.stu.domain.collections.Person">
+        <!--布什总统-->
+        <property name="name" value="George Walker Bush"/>
+        <property name="age" value="73"/>
+        <!--引用上面定义好的集合Bean-->
+        <property name="cars" ref="cars1"/>
+    </bean>
+
+    <!--通过 p 命名空间为bean的属性赋值，使用之前需先导入 p 命名空间的 schema-->
+    <bean id="c.p3" class="edu.stu.domain.collections.Person"
+          p:name="Lee" p:age="35" p:cars-ref="cars1"/>
 
 </beans>
